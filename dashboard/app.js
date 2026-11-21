@@ -359,6 +359,15 @@
     );
   }
 
+  // The eight categories with the most live-token comparables, for the model panel.
+  function topComps() {
+    return Object.keys(DATA.comps).map(function (k) {
+      return { name: k, multiple: DATA.comps[k].multiple, count: DATA.comps[k].count };
+    }).sort(function (a, b) {
+      return b.count - a.count || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+    }).slice(0, 8);
+  }
+
   function modelPanel() {
     var m = DATA.model;
     var compCount = Object.keys(DATA.comps).length;
@@ -373,12 +382,16 @@
         el('div', null, el('span', { text: 'Multiple clamp' }), el('b', { text: m.comp_min + ' to ' + m.comp_max })),
         el('div', null, el('span', { text: 'Shrink prior weight' }), el('b', { text: String(m.comp_shrink) + ' protocols' })),
         el('div', null, el('span', { text: 'Global median multiple' }), el('b', { text: 'x' + DATA.global_multiple.toFixed(3) })),
-        el('div', null, el('span', { text: 'Categories with comparables' }), el('b', { text: String(compCount) + ' of the snapshot' })),
+        el('div', null, el('span', { text: 'Categories priced' }), el('b', { text: String(compCount) })),
         el('div', null, el('span', { text: 'Growth weight' }), el('b', { text: String(m.growth_weight) })),
         el('div', null, el('span', { text: 'Maturity window' }), el('b', { text: String(m.maturity_days) + ' days' })),
         el('div', null, el('span', { text: 'Unknown age' }), el('b', { text: String(m.unknown_age_days) + ' days' }))
       ),
-      el('p', { class: 'sub', text: 'A category with no live-token comparables falls back to the global median. Age is the time since the protocol was first listed, the best record of how long it has run with no token. The early radar is every other rankable pre-token protocol in the snapshot — not a TVL cut — so the board finds launches early, below the watchlist floor.' })
+      el('h3', { text: 'Category multiples — the market prices each category' }),
+      el('div', { class: 'constants' }, topComps().map(function (c) {
+        return el('div', null, el('span', { text: c.name + ' (' + c.count + ' live)' }), el('b', { text: 'x' + c.multiple.toFixed(3) }));
+      })),
+      el('p', { class: 'sub', text: 'The eight categories with the most live-token comparables. A category with no live tokens falls back to the global median. Age is the time since the protocol was first listed, the best record of how long it has run with no token. The early radar is every other rankable pre-token protocol in the snapshot — not a TVL cut — so the board finds launches early, below the watchlist floor.' })
     );
   }
 
